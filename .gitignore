@@ -1,3 +1,4 @@
 *.out
 *.o
-*.in
+heaptest.in
+quicksort.in
