@@ -64,9 +64,39 @@ heap_insert_arm_exit:
 		.global	heap_delete_arm
 		.type	heap_delete_arm, %function // int heap_delete_arm(int a[], int &n)
 heap_delete_arm:
-		stp		x29, x30, [sp, #-16]!
+		stp		x29, x30, [sp, #-48]!
+		stp		x19, x20, [sp, #16]
+		str		x21, [sp, #32]
 
-heap_delete_arm_exit:
-		ldp		x29, x30, [sp], #16
+		mov		x19, x0				// x19 = a[]
+		ldr		x20, [x1]			// x20 = n
+
+		ldr		x21, [x19, #4]		// result ( x21 ) = a[1]
+		cmp		x20, #1				// if( n == 1 )
+		beq		single_element_return//	return result
+
+		// a[1] = a[n]
+		ldr		x0, [x19, x20, lsl #2]
+		str		x0, [x19, #4]
+
+		cmp		x20, #2				// if( n == 2 )
+		beq		double_element_return//	return result
+
+		mov		x29, #1				// i = 1
+loop:	// do while ( n is one greater )
+
+single_element_return:
+		str		xzr, [x1]			//	n = 0
+		b		heap_delete_arm_exit// return result
+
+double_element_return:
+		mov		w0, #1
+		str		x0, [x1]			// n = 1
+
+heap_delete_arm_exit:				// return result & exit
+		mov		w0, w21
+		ldr		x21, [sp, #32]
+		ldp		x19, x20, [sp, #16]
+		ldp		x29, x30, [sp], #48
 		ret
 		.size	heap_delete_arm, (.  - heap_delete_arm)
