@@ -1,46 +1,51 @@
 		.equ	N_REPEAT, 10000
 
-
+////////////////////////////////////////////////////////////////////////////////
 
 		.global	swap_int
 		.type	swap_int, %function // void swap_int(int &i, int &j)
 swap_int:
-		stp		x29, x30, [sp, #-16]!
+		stp		x29, x30, [sp, -16]!
 
-		mov		w2, w1				// temp = j
-		mov		w1, w0				// j = i
-		mov		w0, w2				// i = j
+		ldr		w2, [x0]			// i
+		ldr		w3, [x1]			// j
 
-		ldp		x29, x30, [sp], #16
+		str		w3, [x0]			// i = j
+		str		w2, [x1]			// j = i
+
+		ldp		x29, x30, [sp], 16
 		ret
 		.size	swap_int, (.  - swap_int)
 
-
+////////////////////////////////////////////////////////////////////////////////
 
 		.global	heap_insert_arm
 		.type	heap_insert_arm, %function // void heap_insert_arm(int a[], int &n, int val)
 heap_insert_arm:
-		stp		x29, x30, [sp, #-48]!
-		stp		x19, x20, [sp, #16]
-		str		x21, [sp, #32]
+		stp		x29, x30, [sp, -48]!
+		stp		x19, x20, [sp, 16]
+		str		x21, [sp, 32]
 
-		mov		x19, x0				// x19 = a[]
-		ldr		x20, [x1]				// x20 = n
+		mov		x19, x0				// r19 = a[]
+		ldr		w20, [x1]			// r20 = n
 
-		mov		w3, #1
-		add		w20, w20, w3, lsl #2
+		add		w20, w20, 1			// n++
+		str		w20, [x1]
 
-		str		x2, [x19, x20]		// a[n] = val
+		cmp		w20, 1				// if( n == 1 ) then retun later
 
-		cmp		w20, #1				// if( n == 1 )
-		beq		heap_insert_arm_exit//	return;
+		lsl		w20, w20, 2
+
+		str		w2, [x19, x20]		// a[n] = val
+
+		beq		heap_insert_arm_exit//	return
 
 loop_percolate:	// n effectively becomes i and is pre-shifted to account for size of word
-		mov		w21, w20, lsr #1		// parent = i / 2 ***** VERIFY *****
-		ldr		x4, [x19, x20]		// a[i]
-		ldr		x5, [x19, x21]		// a[parent]
+		mov		w21, w20, lsr 1		// parent = i / 2 ***** VERIFY *****
+		ldr		w4, [x19, x20]		// a[i]
+		ldr		w5, [x19, x21]		// a[parent]
 
-		cmp		x4, x5				// if( a[i] <= a[parent] )
+		cmp		w4, w5				// if( a[i] <= a[parent] )
 		ble		heap_insert_arm_exit//	return
 
 		add		x0, x19, x20		// &a[i]
@@ -49,40 +54,42 @@ loop_percolate:	// n effectively becomes i and is pre-shifted to account for siz
 
 		mov		w20, w21			// i = parent
 
-		cmp		w20, #1				// post-test
+		cmp		w20, 1				// post-test
 		bgt		loop_percolate		// while( i > 1 )
 
 heap_insert_arm_exit:
-		ldr		x21, [sp, #32]
-		ldp		x19, x20, [sp, #16]
-		ldp		x29, x30, [sp], #48
+		ldr		x21, [sp, 32]
+		ldp		x19, x20, [sp, 16]
+		ldp		x29, x30, [sp], 48
 		ret
 		.size	heap_insert_arm, (.  - heap_insert_arm)
 
-
+////////////////////////////////////////////////////////////////////////////////
 
 		.global	heap_delete_arm
 		.type	heap_delete_arm, %function // int heap_delete_arm(int a[], int &n)
 heap_delete_arm:
-		stp		x29, x30, [sp, #-48]!
-		stp		x19, x20, [sp, #16]
-		str		x21, [sp, #32]
+		stp		x29, x30, [sp, -48]!
+		stp		x19, x20, [sp, 16]
+		str		x21, [sp, 32]
 
-		mov		x19, x0				// x19 = a[]
-		ldr		x20, [x1]			// x20 = n
+		/*
+		mov		x19, x0				// r19 = a[]
+		ldr		w20, [x1]			// r20 = n
 
-		ldr		x21, [x19, #4]		// result ( x21 ) = a[1]
-		cmp		x20, #1				// if( n == 1 )
+		ldr		w21, [x19, 4]		// result ( r21 ) = a[1]
+		cmp		w20, 1				// if( n == 1 )
 		beq		single_element_return//	return result
 
 		// a[1] = a[n]
-		ldr		x0, [x19, x20, lsl #2]
-		str		x0, [x19, #4]
+		lsl		w2, w20, 2
+		ldr		w0, [x19, x20]
+		str		w0, [x19, 4]
 
-		cmp		x20, #2				// if( n == 2 )
+		cmp		w20, 2				// if( n == 2 )
 		beq		double_element_return//	return result
 
-		mov		x29, #1				// i = 1
+		mov		w29, 1				// i = 1
 loop:	// do while ( n is one greater )
 
 single_element_return:
@@ -90,13 +97,16 @@ single_element_return:
 		b		heap_delete_arm_exit// return result
 
 double_element_return:
-		mov		w0, #1
+		mov		w0, 1
 		str		x0, [x1]			// n = 1
 
 heap_delete_arm_exit:				// return result & exit
 		mov		w0, w21
-		ldr		x21, [sp, #32]
-		ldp		x19, x20, [sp, #16]
-		ldp		x29, x30, [sp], #48
+		*/
+		ldr		x21, [sp, 32]
+		ldp		x19, x20, [sp, 16]
+		ldp		x29, x30, [sp], 48
 		ret
 		.size	heap_delete_arm, (.  - heap_delete_arm)
+
+////////////////////////////////////////////////////////////////////////////////
