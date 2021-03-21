@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# set the stack size of the shell session for successful execution
+ulimit -s 4000000000
+
 read sort
 if [ "$sort" != "heapsort" ] && [ "$sort" != "quicksort" ]
 then
