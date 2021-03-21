@@ -53,9 +53,9 @@ cmp_y_to_z:
 		add		w0, w0, 4				// Current bit value: xxxx xxxx xxx ( xx1 ) 00
 
 position_branch_table:
-		ldr		x7, [pc]
+		ldr		x7, =branch_table
 		add		x7, x7, x0
-		str		x7, [pc]
+		br		x7
 
 branch_table:
 		b		y_median
