@@ -49,11 +49,13 @@ cmp_x_to_z:
 
 cmp_y_to_z:
 		cmp		x6, x5					// if( y >= z )
-		blt		pre_branch_table
+		blt		position_branch_table
 		add		w0, w0, 4				// Current bit value: xxxx xxxx xxx ( xx1 ) 00
 
-pre_branch_table:
-		// do I increment the program counter here?
+position_branch_table:
+		ldr		x7, [pc]
+		add		x7, x7, x0
+		str		x7, [pc]
 
 branch_table:
 		b		y_median
