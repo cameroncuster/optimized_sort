@@ -128,7 +128,8 @@ heap_delete_arm_exit:
 		sub		w23, w23, 1
 		str		w23, [x22]			// n--
 		mov		w0, w21				// return result
-		stp		x23, x24, [sp], 16
+
+		ldp		x23, x24, [sp], 16
 		ldp		x21, x22, [sp], 16
 		ldp		x19, x20, [sp], 16
 		ldp		x29, x30, [sp], 16

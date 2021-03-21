@@ -89,15 +89,25 @@ median_of_3_arm_exit:
 		.global	quicksort_arm
 		.type	quicksort_arm, %function // void quicksort_arm(long a[], int left, int right)
 quicksort_arm:
-		cmp		x0, x1					// if( length <= 1 )
-		bge		quicksort_arm_exit		//	return
-		stp		x29, x30, [sp, -48]!
-		stp		x19, x20, [sp, 16]
-		stp		x21, x22, [sp, 32]
+		stp		x29, x30, [sp, -16]!
+		stp		x19, x20, [sp, -16]!
+		stp		x21, x22, [sp, -16]!
+		stp		x23, x24, [sp, -16]!
 
-		ldp		x19, x20, [sp, 16]
-		ldp		x21, x22, [sp, 32]
-		ldp		x29, x30, [sp], 48
+		mov		x19, x0					// r19 = a[]
+		mov		w20, x1					// r20 = left
+		mov		w21, x2					// r21 = right
+
+		cmp		w1, w2					// if( left >= right )
+		bge		quicksort_arm_exit		//	return
+
+		// cont.
+
+
 quicksort_arm_exit:
+		ldp		x23, x24, [sp], 16
+		ldp		x21, x22, [sp], 16
+		ldp		x19, x20, [sp], 16
+		ldp		x29, x30, [sp], 16
 		ret
 		.size	quicksort_arm, (.  - quicksort_arm)
