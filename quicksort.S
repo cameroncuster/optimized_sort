@@ -93,18 +93,65 @@ quicksort_arm:
 		stp		x19, x20, [sp, -16]!
 		stp		x21, x22, [sp, -16]!
 		stp		x23, x24, [sp, -16]!
+		stp		x25, x26, [sp, -16]!
 
 		mov		x19, x0					// r19 = a[]
-		mov		w20, x1					// r20 = left
-		mov		w21, x2					// r21 = right
+		mov		w20, w1					// r20 = left
+		mov		w21, w2					// r21 = right
 
-		cmp		w1, w2					// if( left >= right )
+		cmp		w21, w20				// if( left >= right )
 		bge		quicksort_arm_exit		//	return
 
-		// cont.
+		mov		w22, w20				// i = left
+		add		w23, w21, 1				// j = right + 1
+		lsl		w1, w22, 3
+		ldr		x24, [x19, x1]			// pivot = a[left]
 
+not_crossed:
+i_to_pivot:
+		add		w22, w22, 1				// i++
+		lsl		w1, w22, 3
+		ldr		x0, [x19, x1]
+		cmp		x0, x24					// while( a[i] < pivot )
+		blt		i_to_pivot
+
+j_to_pivot:
+		sub		w23, w23, 1				// j--
+		lsl		w1, w23, 3
+		ldr		x0, [x19, x1]
+		cmp		x0, x24					// while( a[j] < pivot )
+		bgt		j_to_pivot
+
+		cmp		w22, w23				// if( i < j )
+		bge		end_do					//	swap( a[i], a[j] )
+		lsl		w0, w22, 3
+		lsl		w1, w23, 3
+		add		x0, x19, x0				// &a[i]
+		add		x1, x19, x1				// &a[j]
+		bl		swap_long				// swap( a[i], a[j] )
+
+end_do:
+		cmp		w22, w23				// while( i <= j )
+		ble		not_crossed
+
+		lsl		w0, w20, 3
+		lsl		w1, w23, 3
+		add		x0, x19, x0				// &a[left]
+		add		x1, x19, x1				// &a[j]
+		bl		swap_long				// swap( a[left], a[j] )
+
+		mov		x0, x19
+		mov		w1, w20
+		sub		w2, w23, 1
+		bl		quicksort_arm			// quicksort_arm( a, left, j - 1 )
+
+		mov		x0, x19
+		add		w1, w23, 1
+		mov		w2, w21
+		bl		quicksort_arm			// quicksort_arm( a, j + 1, right )
 
 quicksort_arm_exit:
+		ldp		x25, x26, [sp], 16
 		ldp		x23, x24, [sp], 16
 		ldp		x21, x22, [sp], 16
 		ldp		x19, x20, [sp], 16
