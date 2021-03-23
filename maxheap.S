@@ -32,7 +32,7 @@ heap_insert_arm:
 		add		w20, w20, 1
 		str		w20, [x1]			// n++
 
-		cmp		w20, 1				// if( n == 1 ) then retun later
+		cmp		w20, 1				// if( n == 1 ) then return later
 
 		lsl		w20, w20, 2
 
