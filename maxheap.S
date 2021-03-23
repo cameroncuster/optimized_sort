@@ -78,6 +78,7 @@ heap_delete_arm:
 
 		mov		x19, x0				// r19 = a[]
 		ldr		w20, [x1]			// r20 = n
+		mov		w23, w20			// r23 = n
 
 		ldr		w21, [x19, 4]		// result ( r21 ) = a[1]
 
@@ -92,7 +93,6 @@ heap_delete_arm:
 		cmp		w20, 2				// if( n == 2 )
 		beq		heap_delete_arm_exit//	return
 
-		mov		w23, w20			// r23 = n
 		lsl		w20, w20, 2			// quick shift of n for word size	*** FIX ***
 		mov		w29, 4				// i = 1
 loop:
