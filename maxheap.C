@@ -145,7 +145,7 @@ int main()
 
 	cout << endl << "=======================================" << endl;
 	read_list(a, n);
-	cout << "List as read:          ";
+	cout << "List as read:          " << endl;
 	print_list(a, n);
 
 	start_time = clock_seconds();
