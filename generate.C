@@ -8,9 +8,9 @@ int main( )
 {
 	srand( time( NULL ) );
 	unsigned i;
-	int min, max, limit;
-	cin >> min >> max >> limit;
+	int max, limit;
+	cin >> max >> limit;
 	for( i = 0; i < limit; i++ )
-		cout << rand( ) % ( max * 2 - min ) << ' ';
+		cout << rand( ) % max << ' ';
 	return 0;
 }
