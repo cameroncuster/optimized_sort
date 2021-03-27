@@ -5,15 +5,12 @@
 		.global	swap_int
 		.type	swap_int, %function // void swap_int(int &i, int &j)
 swap_int:
-		stp		x29, x30, [sp, -16]!
-
 		ldr		w2, [x0]			// i
 		ldr		w3, [x1]			// j
 
 		str		w3, [x0]			// i = j
 		str		w2, [x1]			// j = i
 
-		ldp		x29, x30, [sp], 16
 		ret
 		.size	swap_int, (.  - swap_int)
 
@@ -39,22 +36,43 @@ heap_insert_arm:
 		beq		heap_insert_arm_exit//	return
 
 loop_percolate:	// n effectively becomes i
-		mov		w21, w20			// parent = i / 2
+		lsr		w21, w20, 2			// parent = i / 2
 		lsl		w20, w20, 2
-		ldr		w4, [x19, x20]		// a[i]
-		ldr		w5, [x19, x21]		// a[parent]
+		lsl		w21, w21, 2
+		ldr		w0, [x19, x20]		// a[i]
+		ldr		w1, [x19, x21]		// a[parent]
 
-		cmp		w4, w5				// if( a[i] <= a[parent] )
+		cmp		w0, w1				// if( a[i] <= a[parent] )
 		ble		heap_insert_arm_exit//	return
 
 		add		x0, x19, x20		// &a[i]
 		add		x1, x19, x21		// &a[parent]
-		bl		swap_int			// swap( a[i], a[parent] )
+		bl		swap_int			// swap_int( a[i], a[parent] )
 
-		lsr		w20, w21, 2			// i = parent
+		lsr		w20, w20, 2
+		lsr		w21, w21, 2
+		mov		w20, w21			// i = parent
 
 		cmp		w20, 1				// post-test
 		bgt		loop_percolate		// while( i > 1 )
+/*
+		mov		w21, w20			// parent = i / 2
+		lsl		w20, w20, 2
+		ldr		w0, [x19, x20]		// a[i]
+		ldr		w1, [x19, x21]		// a[parent]
+
+		cmp		w0, w1				// if( a[i] <= a[parent] )
+		ble		heap_insert_arm_exit//	return
+
+		add		x0, x19, x20		// &a[i]
+		add		x1, x19, x21		// &a[parent]
+		bl		swap_int			// swap_int( a[i], a[parent] )
+
+		lsr		w20, w21, 2			// i = parent
+
+		cmp		w20, 4				// post-test
+		bgt		loop_percolate		// while( i > 4 )
+		*/
 
 heap_insert_arm_exit:
 		ldr		x21, [sp, 32]
