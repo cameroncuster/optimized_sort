@@ -32,16 +32,15 @@ heap_insert_arm:
 		add		w20, w20, 1
 		str		w20, [x1]			// n++
 
-		cmp		w20, 1				// if( n == 1 ) then return later
+		lsl		w3, w20, 2
+		str		w2, [x19, x3]		// a[n] = val
 
-		lsl		w20, w20, 2
-
-		str		w2, [x19, x20]		// a[n] = val
-
+		cmp		w20, 1				// if( n == 1 ) then return
 		beq		heap_insert_arm_exit//	return
 
-loop_percolate:	// n effectively becomes i and is pre-shifted to account for size of word
-		mov		w21, w20, lsr 1		// parent = i / 2
+loop_percolate:	// n effectively becomes i
+		mov		w21, w20			// parent = i / 2
+		lsl		w20, w20, 2
 		ldr		w4, [x19, x20]		// a[i]
 		ldr		w5, [x19, x21]		// a[parent]
 
@@ -52,7 +51,7 @@ loop_percolate:	// n effectively becomes i and is pre-shifted to account for siz
 		add		x1, x19, x21		// &a[parent]
 		bl		swap_int			// swap( a[i], a[parent] )
 
-		mov		w20, w21			// i = parent
+		lsr		w20, w21, 2			// i = parent
 
 		cmp		w20, 1				// post-test
 		bgt		loop_percolate		// while( i > 1 )
