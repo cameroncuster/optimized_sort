@@ -5,15 +5,12 @@
 		.global	swap_long
 		.type	swap_long, %function // void swap_long(long &i, long &j)
 swap_long:
-		stp		x29, x30, [sp, -16]!
-
 		ldr		x2, [x0]			// i
 		ldr		x3, [x1]			// j
 
 		str		x3, [x0]			// i = j
 		str		x2, [x1]			// j = i
 
-		ldp		x29, x30, [sp], 16
 		ret
 		.size	swap_long, (.  - swap_long)
 
