@@ -71,41 +71,40 @@ heap_delete_arm:
 		stp		x21, x22, [sp, -16]!
 		stp		x23, x24, [sp, -16]!
 
-		mov		x22, x1				// store &n
-
 		mov		x19, x0				// r19 = a[]
-		ldr		w20, [x1]			// r20 = n
-		mov		w23, w20			// r23 = n
+		mov		x20, x1				// r20 = &n
+		ldr		w21, [x1]			// r21 = n
+		ldr		w22, [x19, 4]		// r22 = a[1] <- return value
+		mov		w23, w21			// r23 = n
 
-		ldr		w21, [x19, 4]		// result ( r21 ) = a[1]
-
-		cmp		w20, 1				// if( n == 1 )
+		cmp		w21, 1				// if( n == 1 )
 		beq		heap_delete_arm_exit//	return
 
 		// a[1] = a[n]
-		lsl		w2, w20, 2
-		ldr		w0, [x19, x2]
+		lsl		w0, w21, 2
+		ldr		w0, [x19, x0]
 		str		w0, [x19, 4]
 
-		cmp		w20, 2				// if( n == 2 )
+		cmp		w21, 2				// if( n == 2 )
 		beq		heap_delete_arm_exit//	return
 
-		lsl		w20, w20, 2			// quick shift of n for word size	*** FIX ***
+		lsl		w21, w21, 2			// preshift n
+
 		mov		w29, 4				// i = 1
 loop:
-		lsl		w0, w20, 2			// left_child = 2 * i
-		add		w1, w0, 4			// right_child = left_child + 1
-		mov		w2, w0				// big_child = left_child
+		lsl		w0, w29, 1			// left_child = 2 * i
+		mov		w1, w0				// big_child = left_child
+		add		w2, w0, 4			// right_child = left_child + 1
 
-		cmp		w1, w20				// if( right_child < n )
-		bge		heap_delete_arm_exit//	return
+		cmp		w2, w21				// if( right_child < n )
+		bge		skip_cmp_right_and_left_children// compare failed
 
-		ldr		w3, [x19, x1]		// a[right_child]
+		ldr		w3, [x19, x2]		// a[right_child]
 		ldr		w4, [x19, x0]		// a[left_child]
 		cmp		w3, w4				// if( a[right_child] > a[left_child] )
-		ble		heap_delete_arm_exit//	return
+		ble		skip_cmp_right_and_left_children//	compare failed
 
-		mov		w2, w1				// big_child = right_child
+		mov		w1, w2				// big_child = right_child
 
 skip_cmp_right_and_left_children:
 		ldr		w0, [x19, x29]		// a[i]
@@ -113,18 +112,19 @@ skip_cmp_right_and_left_children:
 		cmp		w0, w1				// if( a[i] >= a[big_child] )
 		bge		heap_delete_arm_exit//	return
 
+		add		x0, x19, x29
+		add		x1, x19, x1
 		mov		w29, w2				// i = big_child
-
 		bl		swap_int			// swap_int( a[*i], a[big_child] ) -> prev_i value
 
 		lsl		w0, w29, 1			// 2 * i
-		cmp		w0, w20				// while( 2 * i < n )
-		bge		loop
+		cmp		w0, w21				// while( 2 * i < n )
+		blt		loop
 
 heap_delete_arm_exit:
 		sub		w23, w23, 1
-		str		w23, [x22]			// n--
-		mov		w0, w21				// return result
+		str		w23, [x20]			// n--
+		mov		w0, w22				// return result
 
 		ldp		x23, x24, [sp], 16
 		ldp		x21, x22, [sp], 16
