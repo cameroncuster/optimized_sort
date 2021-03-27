@@ -77,18 +77,16 @@ heap_delete_arm:
 		ldr		w22, [x19, 4]		// r22 = a[1] <- return value
 		mov		w23, w21			// r23 = n
 
-		cmp		w21, 1				// if( n == 1 )
+		cmp		w23, 1				// if( n == 1 )
 		beq		heap_delete_arm_exit//	return
 
 		// a[1] = a[n]
-		lsl		w0, w21, 2
-		ldr		w0, [x19, x0]
+		lsl		w21, w21, 2
+		ldr		w0, [x19, x21]
 		str		w0, [x19, 4]
 
-		cmp		w21, 2				// if( n == 2 )
+		cmp		w23, 2				// if( n == 2 )
 		beq		heap_delete_arm_exit//	return
-
-		lsl		w21, w21, 2			// preshift n
 
 		mov		w29, 4				// i = 1
 loop:
@@ -97,7 +95,7 @@ loop:
 		add		w2, w0, 4			// right_child = left_child + 1
 
 		cmp		w2, w21				// if( right_child < n )
-		bge		skip_cmp_right_and_left_children// compare failed
+		bge		skip_cmp_right_and_left_children//	compare failed
 
 		ldr		w3, [x19, x2]		// a[right_child]
 		ldr		w4, [x19, x0]		// a[left_child]
