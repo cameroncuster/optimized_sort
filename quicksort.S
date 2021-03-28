@@ -97,7 +97,7 @@ quicksort_arm:
 		mov		w20, w1					// r20 = left
 		mov		w21, w2					// r21 = right
 
-		cmp		w21, w20				// if( left >= right )
+		cmp		w20, w21				// if( left >= right )
 		bge		quicksort_arm_exit		//	return
 
 		mov		w22, w20				// i = left
