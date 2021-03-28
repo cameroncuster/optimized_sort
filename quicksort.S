@@ -32,6 +32,8 @@ median_of_3_arm:
 		ldr		x5, [x0, x2]			// a_right = a[right]	-> z
 		ldr		x6, [x0, x3]			// a_mid = a[mid]		-> y
 
+		//add		x1, x1, x0				// &a[left]
+
 		mov		w7, 0					// Bit value: 000
 
 cmp_x_to_y:
@@ -47,12 +49,12 @@ cmp_x_to_z:
 cmp_y_to_z:
 		cmp		x6, x5					// if( y >= z )
 		blt		position_branch_table
-		add		w0, w0, 4				// Current bit value: xxxx xxxx xxx ( xx1 ) 00
+		add		w4, w7, 4				// Current bit value: xxxx xxxx xxx ( xx1 ) 00
 
 position_branch_table:
-		ldr		x7, =branch_table
-		add		x7, x7, x0
-		br		x7
+		ldr		x5, =branch_table
+		add		x4, x4, x5
+		br		x4
 
 branch_table:
 		b		y_median
@@ -64,15 +66,16 @@ branch_table:
 		b		z_median
 		b		y_median
 
-		add		x1, x4, x0				// &a[left]
 
 y_median:
-		add		x0, x6, x0				// &a[mid]
+		add		x0, x3, x0				// &a[mid]
+		add		x1, x1, x0				// &a[left]
 		bl		swap_long
 		b		median_of_3_arm_exit
 
 z_median:
-		add		x0, x5, x0				// &a[right]
+		add		x0, x2, x0				// &a[right]
+		add		x1, x1, x0				// &a[left]
 		bl		swap_long
 
 x_median:
