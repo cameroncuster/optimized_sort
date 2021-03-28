@@ -102,21 +102,23 @@ quicksort_arm:
 
 		mov		w22, w20				// i = left
 		add		w23, w21, 1				// j = right + 1
-		lsl		w1, w22, 3
-		ldr		x24, [x19, x1]			// pivot = a[left]
+
+		bl		median_of_3_arm
+		lsl		w0, w22, 3
+		ldr		x24, [x19, x0]			// pivot = a[left]
 
 not_crossed:
 i_to_pivot:
 		add		w22, w22, 1				// i++
-		lsl		w1, w22, 3
-		ldr		x0, [x19, x1]
+		lsl		w0, w22, 3
+		ldr		x0, [x19, x0]
 		cmp		x0, x24					// while( a[i] < pivot )
 		blt		i_to_pivot
 
 j_to_pivot:
 		sub		w23, w23, 1				// j--
-		lsl		w1, w23, 3
-		ldr		x0, [x19, x1]
+		lsl		w0, w23, 3
+		ldr		x0, [x19, x0]
 		cmp		x0, x24					// while( a[j] < pivot )
 		bgt		j_to_pivot
 
