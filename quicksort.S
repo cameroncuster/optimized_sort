@@ -91,7 +91,6 @@ quicksort_arm:
 		stp		x19, x20, [sp, -16]!
 		stp		x21, x22, [sp, -16]!
 		stp		x23, x24, [sp, -16]!
-		stp		x25, x26, [sp, -16]!
 
 		mov		x19, x0					// r19 = a[]
 		mov		w20, w1					// r20 = left
@@ -151,7 +150,6 @@ end_do:
 		bl		quicksort_arm			// quicksort_arm( a, j + 1, right )
 
 quicksort_arm_exit:
-		ldp		x25, x26, [sp], 16
 		ldp		x23, x24, [sp], 16
 		ldp		x21, x22, [sp], 16
 		ldp		x19, x20, [sp], 16

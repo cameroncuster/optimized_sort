@@ -69,7 +69,6 @@ heap_delete_arm:
 		stp		x29, x30, [sp, -16]!
 		stp		x19, x20, [sp, -16]!
 		stp		x21, x22, [sp, -16]!
-		stp		x23, x24, [sp, -16]!
 
 		mov		x19, x0				// r19 = a[]
 		mov		x20, x1				// r20 = &n
@@ -128,7 +127,6 @@ skip_cmp_right_and_left_children:
 
 heap_delete_arm_exit:
 		mov		w0, w22				// return result
-		ldp		x23, x24, [sp], 16
 		ldp		x21, x22, [sp], 16
 		ldp		x19, x20, [sp], 16
 		ldp		x29, x30, [sp], 16
