@@ -11,6 +11,8 @@ const int N_REPEAT = 10000;
 const bool DEBUG = true;
 
 extern "C" void swap_int(int &i, int &j);
+extern "C" void heapify(int a[], int n, int i);
+extern "C" void buildHeap(int a[], int n);
 extern "C" void heap_insert_arm(int a[], int &n, int val);
 extern "C" int heap_delete_arm(int a[], int &n);
 
@@ -152,8 +154,11 @@ int main()
     for (int i_repeat = 0; i_repeat < N_REPEAT; i_repeat++)
     {
         n_heap = 0;
+        buildHeap(heap, n_heap);
+        /*
         for (i = 0; i < n; i++)
             heap_insert_arm(heap, n_heap, a[i+1]);
+            */
         if (DEBUG && (i_repeat == 0))
         {
             cout << "After loop of insert:  ";
