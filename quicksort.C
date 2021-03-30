@@ -10,6 +10,7 @@
 using namespace std;
 
 const int  MAX_N =  1000000;
+//extern "C" void insertion_sort(long a[], int left, int right);
 extern "C" void quicksort_arm(long a[], int left, int right);
 extern "C" void median_of_3_arm(long a[], int left, int right);
 #define DEBUG false
@@ -60,8 +61,6 @@ void check_order(long a[], int n)
         exit(123);
     }
 }
-
-
 
 ////////////////////////////////////////////////////////////////////
 
@@ -116,6 +115,27 @@ void median_of_3_to_left(long a[], int left, int right)
 }
 
 ////////////////////////////////////////////////////////////////////
+//  insertion sort for lists with less than 20 elements           //
+////////////////////////////////////////////////////////////////////
+
+void insertion_sort( long a[], int left, int right )
+{
+    int i, j;
+    long key;
+    for( i = 1; i <= right; i++ )
+    {
+        key = a[i];
+        j = i - 1;
+        while( j >= left && a[j] > key )
+        {
+            a[j + 1] = a[j];
+            j = j - 1;
+        }
+        a[j + 1] = key;
+    }
+}
+
+////////////////////////////////////////////////////////////////////
 //                          quicksort                             //
 //    uses original partition algorithm                           //
 //    uses median of three as pivot                               //
@@ -129,6 +149,12 @@ void quicksort_median_3(long a[], int left, int right)
 #if DEBUG_MED
     long check_median;
 #endif
+
+    if( right - left <= 20 )
+    {
+        insertion_sort( a, left, right );
+        return;
+    }
 
     if (left < right)
     {
