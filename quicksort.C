@@ -10,7 +10,7 @@
 using namespace std;
 
 const int  MAX_N =  1000000;
-//extern "C" void insertion_sort(long a[], int left, int right);
+extern "C" void insertion_sort_arm(long a[], int left, int right);
 extern "C" void quicksort_arm(long a[], int left, int right);
 extern "C" void median_of_3_arm(long a[], int left, int right);
 #define DEBUG false

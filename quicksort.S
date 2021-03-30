@@ -84,6 +84,45 @@ median_of_3_arm_exit:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+        .global insertion_sort_arm
+        .type   insertion_sort_arm, %function // void insertion_sort_arm( long a[], int left, int right )
+insertion_sort_arm:
+        stp     x29, x30, [sp, -16]!
+
+        mov     w3, w1                  // i = left
+
+loop_over_keys:
+        cmp     w3, w2                  // while( i <= right )
+        bgt     exit_insertion_sort
+        ldr     x4, [x0, x3, lsl 3]     // key = a[i]
+        sub     w5, w3, 1               // j = i - 1
+
+insertion_loop:
+        cmp     w5, w1
+        blt     end_insertion_loop
+        ldr     x6, [x0, x5, lsl 3]
+        cmp     x6, x4
+        ble     end_insertion_loop      // while( j >= left && a[j] > key )
+        add     w7, w5, 1               // r7 = j + 1
+        str     x6, [x0, x7, lsl 3]     // a[j + 1] = a[j]
+        sub     w5, w5, 1               // j--
+        b       insertion_loop
+
+
+end_insertion_loop:
+        add     w5, w5, 1               // j += 1
+        str     x4, [x0, x5, lsl 3]     // a[j + 1] = key
+        add     w3, w3, 1               // i++
+        b       loop_over_keys
+
+exit_insertion_sort:
+        ldp     x29, x30, [sp], 16
+        ret
+        .size   insertion_sort_arm, (. - insertion_sort_arm)
+
+
+////////////////////////////////////////////////////////////////////////////////
+
         .global quicksort_arm
         .type   quicksort_arm, %function // void quicksort_arm(long a[], int left, int right)
 quicksort_arm:
@@ -92,6 +131,13 @@ quicksort_arm:
         stp     x21, x22, [sp, -16]!
         stp     x23, x24, [sp, -16]!
 
+        sub     w3, w2, w1              // r3 = right - left
+        cmp     w3, 20                  // if( r3 <= 20 )
+        bgt     call_quicksort
+        bl      insertion_sort_arm      // insertion_sort_arm( a[], left, right )
+        b       quicksort_arm_exit
+
+call_quicksort:
         mov     x19, x0                 // r19 = a[]
         mov     w20, w1                 // r20 = left
         mov     w21, w2                 // r21 = right
