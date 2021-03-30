@@ -16,9 +16,9 @@ swap_int:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-        .global heapify
-        .type   heapify, %function // void heapify( int a[], int n, int i )
-heapify:
+        .global heapify_arm
+        .type   heapify_arm, %function // void heapify_arm( int a[], int n, int i )
+heapify_arm:
         stp     x29, x30, [sp, -16]!
         stp     x19, x20, [sp, -16]!
 
@@ -26,74 +26,75 @@ heapify:
         mov     w20, w1             // r20 = n
         mov     w29, w2             // r29 = i
 
-        mov     w3, w29             // smallest = i
+        mov     w3, w29             // largest = i
         lsl     w2, w2, 1           // i *= 2
-        add     w4, w2, 1           // l = 2 * i + 1
-        add     w5, w2, 2           // r = 2 * i + 2
+        mov     w4, w2              // l = i
+        add     w5, w2, 1           // r = i + 1
 
         cmp     w4, w20             // if( l >= n )
         bge     left_child_out_of_bounds//  goto left_child_out_of_bounds
         ldr     w6, [x19, x4, lsl 2]// a[l]
-        ldr     w7, [x19, x3, lsl 2]// a[smallest]
-        cmp     w6, w7              // if( a[l] >= a[smallest] )
-        bge     left_child_out_of_bounds//  goto left_child_out_of_bounds
-        mov     w3, w4              // smallest = l
+        ldr     w7, [x19, x3, lsl 2]// a[largest]
+        cmp     w6, w7              // if( a[l] <= a[largest] )
+        ble     left_child_out_of_bounds//  goto left_child_out_of_bounds
+        mov     w3, w4              // largest = l
 
 left_child_out_of_bounds:
         cmp     w5, w20             // if( r >= n )
         bge     right_child_out_of_bounds// goto right_child_out_of_bounds
-        ldr     w6, [x19, x4, lsl 2]// a[r]
-        ldr     w7, [x19, x3, lsl 2]// a[smallest]
-        cmp     w6, w7              // if( a[r] >= a[smallest] )
-        bge right_child_out_of_bounds// goto right_child_out_of_bounds
-        mov     w3, w5              // smallest = r
+        ldr     w6, [x19, x5, lsl 2]// a[r]
+        ldr     w7, [x19, x3, lsl 2]// a[largest]
+        cmp     w6, w7              // if( a[r] <= a[largest] )
+        ble     right_child_out_of_bounds// goto right_child_out_of_bounds
+        mov     w3, w5              // largest = r
 
 right_child_out_of_bounds:
-        cmp     w3, w29             // if( smallest != i )
+        cmp     w3, w29             // if( largest == i )
         beq     heapify_exit        //  return
         lsl     w29, w29, 2
         add     x0, x19, x29
         mov     w29, w3
         lsl     w3, w3, 2
         add     x1, x19, x3
-        bl      swap_int            // swap_int( a[i], a[smallest] )
+        bl      swap_int            // swap_int( a[i], a[largest] )
 
         mov     x0, x19
         mov     w1, w20
         mov     w2, w29
-        bl      heapify             // heapify( a[], n, smallest )
+        bl      heapify_arm         // heapify_arm( a[], n, largest )
 
 heapify_exit:
         ldp     x19, x20, [sp], 16
         ldp     x29, x30, [sp], 16
         ret
-        .size   heapify, (. - heapify)
+        .size   heapify_arm, (. - heapify_arm)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-        .global buildHeap
-        .type   buildHeap, %function // void buildHeap( int a[], int n )
-buildHeap:
+        .global buildHeap_arm
+        .type   buildHeap_arm, %function // void buildHeap_arm( int a[], int n )
+buildHeap_arm:
         stp     x29, x30, [sp, -16]!
         stp     x19, x20, [sp, -16]!
 
         mov     x19, x0             // r19 = a[]
         mov     w20, w1             // r20 = n
-        mov     w29, w20            // i = n
+        lsr     w29, w20, 1         // i = n / 2
+        sub     w29 ,w29, 1         // i--
 
 buildHeap_Heapify_Values:
         mov     x0, x19
         mov     w1, w20
         mov     w2, w29
-        bl      heapify             // heapify( a[], n, i )
+        bl      heapify_arm         // heapify_arm( a[], n, i )
         sub     w29, w29, 1
         cmp     w29, 0
-        bge     buildHeap_Heapify_Values   // for( i = n; i >= 0; i-- )
+        bge     buildHeap_Heapify_Values // for( i = n; i >= 0; i-- )
 
         ldp     x19, x20, [sp], 16
         ldp     x29, x30, [sp], 16
         ret
-        .size   buildHeap, (. - buildHeap)
+        .size   buildHeap_arm, (. - buildHeap_arm)
 
 ////////////////////////////////////////////////////////////////////////////////
 

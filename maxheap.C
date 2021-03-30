@@ -8,15 +8,16 @@
 using namespace std;
 
 const int N_REPEAT = 10000;
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 extern "C" void swap_int(int &i, int &j);
-extern "C" void heapify(int a[], int n, int i);
-extern "C" void buildHeap(int a[], int n);
+extern "C" void heapify_arm(int a[], int n, int i);
+extern "C" void buildHeap_arm(int a[], int n);
 extern "C" void heap_insert_arm(int a[], int &n, int val);
 extern "C" int heap_delete_arm(int a[], int &n);
 
-
+#define USE_LINEAR_BUILD_HEAP true
+#define USE_LINEAR_BUILD_HEAP_ARM true
 
 ////////////////////////////////////////////////////////////////////
 
@@ -70,6 +71,35 @@ void read_list(int a[], int &n)
     }
     n--;
     inf.close();
+}
+
+////////////////////////////////////////////////////////////////////
+
+void heapify( int a[], int n, int element )
+{
+    int largest = element;
+    int left = 2 * element;
+    int right = 2 * element + 1;
+
+    if( left < n && a[left] > a[largest] )
+        largest = left;
+
+    if( right < n && a[right] > a[largest] )
+        largest = right;
+
+    if( largest != element )
+    {
+        swap( a[element], a[largest] );
+        heapify( a, n, largest );
+    }
+}
+
+////////////////////////////////////////////////////////////////////
+
+void buildHeap( int a[], int n )
+{
+    for( int i = n / 2 - 1; i >= 0; i-- )
+        heapify( a, n, i );
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -153,12 +183,21 @@ int main()
     start_time = clock_seconds();
     for (int i_repeat = 0; i_repeat < N_REPEAT; i_repeat++)
     {
+#if USE_LINEAR_BUILD_HEAP
+        n_heap = n;
+        for( i = 0; i < n; i++ )    // O( n ) component - performance reduction
+            heap[i] = a[i];
+    #if USE_LINEAR_BUILD_HEAP_ARM
+        buildHeap_arm( heap, n_heap );
+    #else
+        buildHeap( heap, n_heap );
+    #endif
+#else
         n_heap = 0;
-        buildHeap(heap, n_heap);
-        /*
         for (i = 0; i < n; i++)
             heap_insert_arm(heap, n_heap, a[i+1]);
-            */
+#endif
+
         if (DEBUG && (i_repeat == 0))
         {
             cout << "After loop of insert:  ";
