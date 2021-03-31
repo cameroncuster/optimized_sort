@@ -123,7 +123,7 @@ heap_insert_arm:
         cmp     w20, 1                  // if( n == 1 ) then return
         beq     heap_insert_arm_exit    //  return
 
-loop_percolate:                         // n effectively becomes i
+loop_percolate_up:                         // n effectively becomes i
         lsr     w21, w20, 1             // parent = i / 2
         lsl     w20, w20, 2
         lsl     w21, w21, 2
@@ -140,7 +140,7 @@ loop_percolate:                         // n effectively becomes i
         lsr     w20, w21, 2             // i = parent
 
         cmp     w20, 1                  // post-test
-        bgt     loop_percolate          // while( i > 1 )
+        bgt     loop_percolate_up       // while( i > 1 )
 
 heap_insert_arm_exit:
         ldr     x21, [sp, 32]
@@ -182,7 +182,7 @@ heap_delete_arm:
         lsl     w21, w21, 2
 
         mov     w29, 4                  // i = 1
-loop:
+loop_percolate_down:
         lsl     w6, w29, 1              // left_child = 2 * i
         mov     w7, w6                  // big_child = left_child
         add     w8, w6, 4               // right_child = left_child + 1
@@ -210,7 +210,7 @@ skip_cmp_right_and_left_children:
 
         lsl     w0, w29, 1
         cmp     w0, w21                 // while( 2 * i < n )
-        blt     loop
+        blt     loop_percolate_down
 
 heap_delete_arm_exit:
         mov     w0, w22                 // return result
@@ -220,4 +220,6 @@ heap_delete_arm_exit:
         ret
         .size   heap_delete_arm, (.  - heap_delete_arm)
 
+////////////////////////////////////////////////////////////////////////////////
+//  end of heapsort arm utilities                                             //
 ////////////////////////////////////////////////////////////////////////////////
