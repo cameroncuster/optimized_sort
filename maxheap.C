@@ -7,7 +7,7 @@
 #include <ctime>
 using namespace std;
 
-const int N_REPEAT = 10000;
+const int N_REPEAT = 1;
 const bool DEBUG = false;
 
 extern "C" void swap_int(int &i, int &j);
