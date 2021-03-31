@@ -17,8 +17,10 @@ extern "C" void median_of_3_arm(long a[], int left, int right);
 #define DEBUG false
 #define DEBUG_MED false
 #define USE_ARM_MEDIAN true
-#define INSERTION_SORT_QUICKSORTMED3 true
-#define INSERTION_SORT_QUICKSORTLEFT false
+#define USE_INSERTION_SORT_MED3 true
+#define USE_INSERTION_SORT_LEFT true
+#define USE_ARM_INSERTION_SORT_QUICKSORT_MED3 true
+#define USE_ARM_INSERTION_SORT_QUICKSORT_LEFT true
 
 ////////////////////////////////////////////////////////////////////
 
@@ -153,10 +155,14 @@ void quicksort_median_3(long a[], int left, int right)
     long check_median;
 #endif
 
-#if INSERTION_SORT_QUICKSORTMED3
+#if USE_INSERTION_SORT_MED3
     if( right - left <= INSERTION_SORT_SIZE )
     {
+    #if USE_ARM_INSERTION_SORT_QUICKSORT_MED3
+        insertion_sort_arm( a, left, right );
+    #else
         insertion_sort( a, left, right );
+    #endif
         return;
     }
 #endif
@@ -221,10 +227,14 @@ void quicksort_left(long a[], int left, int right)
     long pivot;
 
     // insertion sort for quicksort left is slower
-#if INSERTION_SORT_QUICKSORTLEFT
+#if USE_INSERTION_SORT_LEFT
     if( right - left <= INSERTION_SORT_SIZE )
     {
+    #if USE_ARM_INSERTION_SORT_QUICKSORT_LEFT
+        insertion_sort_arm( a, left, right );
+    #else
         insertion_sort( a, left, right );
+    #endif
         return;
     }
 #endif

@@ -1,6 +1,5 @@
-        .equ    MAX_N, 1000000
         .equ    INSERTION_SORT_SIZE, 20
-        .set    INSERTION_SORT, 1       // behaves as a boolean #define C++ directive
+        .set    USE_INSERTION_SORT, 1       // behaves as a boolean #define C++ directive
 
 ////////////////////////////////////////////////////////////////////////////////
 //  swap two 8 byte elements given their addresses                            //
@@ -142,7 +141,7 @@ quicksort_arm:
         stp     x21, x22, [sp, -16]!
         stp     x23, x24, [sp, -16]!
 
-        .if     INSERTION_SORT
+        .if     USE_INSERTION_SORT
 
         sub     w3, w2, w1              // r3 = right - left
         cmp     w3, INSERTION_SORT_SIZE // if( r3 <= 20 )
