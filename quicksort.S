@@ -1,5 +1,5 @@
         .equ    INSERTION_SORT_SIZE, 20
-        .set    USE_INSERTION_SORT, 1       // behaves as a boolean #define C++ directive
+        .set    USE_INSERTION_SORT, 1   // behaves as a boolean #define C++ directive
 
 ////////////////////////////////////////////////////////////////////////////////
 //  swap two 8 byte elements given their addresses                            //
