@@ -1,21 +1,25 @@
         .equ    MAX_N, 1000000
         .equ    INSERTION_SORT_SIZE, 20
-        .set    INSERTION_SORT, 1
+        .set    INSERTION_SORT, 1       // behaves as a boolean #define C++ directive
 
+////////////////////////////////////////////////////////////////////////////////
+//  swap two 8 byte elements given their addresses                            //
 ////////////////////////////////////////////////////////////////////////////////
 
         .global swap_long
-        .type   swap_long, %function // void swap_long(long &i, long &j)
+        .type   swap_long, %function    // void swap_long(long &i, long &j)
 swap_long:
-        ldr     x2, [x0]            // i
-        ldr     x3, [x1]            // j
+        ldr     x2, [x0]                // i
+        ldr     x3, [x1]                // j
 
-        str     x3, [x0]            // i = j
-        str     x2, [x1]            // j = i
+        str     x3, [x0]                // i = j
+        str     x2, [x1]                // j = i
 
         ret
         .size   swap_long, (.  - swap_long)
 
+////////////////////////////////////////////////////////////////////////////////
+//  evaluate the median of 3 for quicksort utilizing a branching table        //
 ////////////////////////////////////////////////////////////////////////////////
 
         .global median_of_3_arm
@@ -85,6 +89,8 @@ median_of_3_arm_exit:
         .size   median_of_3_arm, (.  - median_of_3_arm)
 
 ////////////////////////////////////////////////////////////////////////////////
+//  insertion sort implementation                                             //
+////////////////////////////////////////////////////////////////////////////////
 
         .global insertion_sort_arm
         .type   insertion_sort_arm, %function // void insertion_sort_arm( long a[], int left, int right )
@@ -124,6 +130,9 @@ exit_insertion_sort:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+//  quicksort implementation utilizing median of 3 branching table and        //
+//  insertion sort with lists <= INSERTION_SORT_SIZE                          //
+////////////////////////////////////////////////////////////////////////////////
 
         .global quicksort_arm
         .type   quicksort_arm, %function // void quicksort_arm(long a[], int left, int right)
@@ -138,13 +147,13 @@ quicksort_arm:
         sub     w3, w2, w1              // r3 = right - left
         cmp     w3, INSERTION_SORT_SIZE // if( r3 <= 20 )
         bgt     call_quicksort
-        bl      insertion_sort_arm      // insertion_sort_arm( a[], left, right )
+        bl      insertion_sort_arm      // insertion_sort_arm( a, left, right )
         b       quicksort_arm_exit
 
         .endif
 
 call_quicksort:
-        mov     x19, x0                 // r19 = a[]
+        mov     x19, x0                 // r19 = a
         mov     w20, w1                 // r20 = left
         mov     w21, w2                 // r21 = right
 

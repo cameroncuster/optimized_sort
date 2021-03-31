@@ -18,7 +18,7 @@ extern "C" void median_of_3_arm(long a[], int left, int right);
 #define DEBUG_MED false
 #define USE_ARM_MEDIAN true
 #define INSERTION_SORT_QUICKSORTMED3 true
-#define INSERTION_SORT_QUICKSORTLEFT true
+#define INSERTION_SORT_QUICKSORTLEFT false
 
 ////////////////////////////////////////////////////////////////////
 
@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
 #endif
 
     if (argc == 1)
-    { 
+    {
         infile.open("quicksort.in");
         if (infile . fail())
         {
@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
         }
     }
     else
-    { 
+    {
         infile.open(argv[1]);
         if (infile . fail())
         {
@@ -374,7 +374,7 @@ int main(int argc, char *argv[])
     check_order(a, n);
 #if DEBUG
     print_list(a, n);
-#endif 
+#endif
     cerr << "arm median 3 took " << t2 - t1 << " seconds." << endl;
 
     cout << "Before quicksort_left on sorted list" << endl;
@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
     check_order(b, n);
 #if DEBUG
     print_list(b, n);
-#endif 
+#endif
     cerr << "left took         " << t4 - t3 << " seconds." << endl;
 
     cout << "Done with quicksort" << endl;
@@ -395,4 +395,3 @@ int main(int argc, char *argv[])
 ////////////////////////////////////////////////////////////////////
 //                End median of 3 quicksort                       //
 ////////////////////////////////////////////////////////////////////
-
