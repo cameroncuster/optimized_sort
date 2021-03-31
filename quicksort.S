@@ -1,4 +1,6 @@
         .equ    MAX_N, 1000000
+        .equ    INSERTION_SORT_SIZE, 20
+        .set    INSERTION_SORT, 1
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -131,11 +133,15 @@ quicksort_arm:
         stp     x21, x22, [sp, -16]!
         stp     x23, x24, [sp, -16]!
 
+        .if     INSERTION_SORT
+
         sub     w3, w2, w1              // r3 = right - left
-        cmp     w3, 20                  // if( r3 <= 20 )
+        cmp     w3, INSERTION_SORT_SIZE // if( r3 <= 20 )
         bgt     call_quicksort
         bl      insertion_sort_arm      // insertion_sort_arm( a[], left, right )
         b       quicksort_arm_exit
+
+        .endif
 
 call_quicksort:
         mov     x19, x0                 // r19 = a[]

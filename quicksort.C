@@ -10,12 +10,15 @@
 using namespace std;
 
 const int  MAX_N =  1000000;
+const int  INSERTION_SORT_SIZE = 20;
 extern "C" void insertion_sort_arm(long a[], int left, int right);
 extern "C" void quicksort_arm(long a[], int left, int right);
 extern "C" void median_of_3_arm(long a[], int left, int right);
 #define DEBUG false
 #define DEBUG_MED false
 #define USE_ARM_MEDIAN true
+#define INSERTION_SORT_QUICKSORTMED3 true
+#define INSERTION_SORT_QUICKSORTLEFT true
 
 ////////////////////////////////////////////////////////////////////
 
@@ -150,11 +153,13 @@ void quicksort_median_3(long a[], int left, int right)
     long check_median;
 #endif
 
-    if( right - left <= 20 )
+#if INSERTION_SORT_QUICKSORTMED3
+    if( right - left <= INSERTION_SORT_SIZE )
     {
         insertion_sort( a, left, right );
         return;
     }
+#endif
 
     if (left < right)
     {
@@ -214,6 +219,15 @@ void quicksort_left(long a[], int left, int right)
     int  i;
     int  j;
     long pivot;
+
+    // insertion sort for quicksort left is slower
+#if INSERTION_SORT_QUICKSORTLEFT
+    if( right - left <= INSERTION_SORT_SIZE )
+    {
+        insertion_sort( a, left, right );
+        return;
+    }
+#endif
 
     if (left < right)
     {
